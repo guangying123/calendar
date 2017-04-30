@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>日历</title>
+    <script src="jQuery.js"></script>
+    <style>
+        th,td{
+            width:50px;
+            height:30px;
+            text-align: center;
+        }
+        .classred{
+            color: red;
+        }
+    </style>
+</head>
+<body>
+<div style="margin: 0 30%">
+    <table border="1" >
+        <caption></caption>
+        <tr><th>一</th><th>二</th><th>三</th><th>四</th><th>五</th><th>六</th><th>七</th></tr>
+        <tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+        <tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+        <tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+        <tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+        <tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+    </table>
+    <input type="text" placeholder="输入年份" id="myyear"/><input type="text" id="mymonth" placeholder="输入月份"/>
+    <button>show</button>
+</div>
+<script>
+
+    var tian=[31,28,31,30,31,30,31,31,30,31,30,31];
+
+ function  show(year,month) {
+     var mydate = new Date();
+     document.querySelector('caption').innerHTML = year +"年"+month+"月";
+     var firstday = instancedays(year,month);
+     var count = 1;
+     console.log(firstday);
+     var aim = document.querySelectorAll('tr td');
+    var temmonthday = tian[month-1];
+    if(isrun(year) && month == 2)
+    {
+        temmonthday = 29;
+    }
+
+     for(var i = 0;i<aim.length;i++)
+     {
+         if(aim[i].getAttribute('class'))
+         {
+             aim[i].removeAttribute('class');
+         }
+         if(i < firstday)
+         {
+             aim[i].innerHTML = "";
+             continue;
+         }
+         if(count >temmonthday)
+         {
+             aim[i].innerHTML = "";
+             continue;
+         }
+         aim[i].innerHTML = count++;
+         if(mydate.getDate() == count-1)
+         {
+             aim[i].setAttribute('class','classred');
+         }
+     }
+
+ }
+//2017年4月1  周六
+
+    function isrun(year) {
+     if(year%4 ==0&&year%100!=0 || year%400 ==0)
+         return true;
+     return false;
+    }
+
+    function  instancedays(year,month) {
+
+        if(year==2017&&month>=4||year>2017)//当所输入的时间点大于2017年4月时
+        {
+            var tmonth;
+            var days=0,flag = 0;
+            if(year >2017)
+            {
+                flag = 1;
+                tmonth = 13;
+            }
+            else
+            {
+                tmonth = month;
+            }
+            for(var i = 4;i<tmonth;i++)
+            {
+                days+=tian[i-1];
+            }
+
+            if(flag)
+            {
+                    for (var i = 2018; i < year; i++)
+                    {
+                        if (isrun(i))
+                        {
+                            days += 366;
+                            continue;
+                        }
+                        days += 365;
+                    }
+
+                    for (var i = 1;i<month;i++)
+                    {
+                        if(i == 2&&isrun(year))
+                        {
+                            days+=29;
+                            continue;
+                        }
+                        days+=tian[i-1];
+                    }
+            }
+            console.log("DAYS:"+days);
+           return  (days%7+5)%7;
+        }
+        else//当输入时间小于2017年4月时 先算days
+        {
+            var days = 0;
+            var hflag = 0,hmonth = month;
+            if(year <2017)
+            {
+                hflag = 1;
+                hmonth= 1;
+            }
+            for(var i = hmonth;i<4;i++)
+            {
+                days+=tian[i-1];
+            }
+
+            if(hflag)
+            {
+               // console.log(parseInt(year)+1+"@");
+                for(var i = parseInt(year)+1;i<2017;i++)
+                {
+                    console.log("year"+i);
+                    if(isrun(i))
+                    {
+                        days+=366;
+                        continue;
+                    }
+                    days+=365;
+                }
+                for(var i =month;i<13;i++)
+                {
+                    console.log("month"+i);
+                    if(i==2&&isrun(year))
+                    {
+                        days+=29;
+                        continue;
+                    }
+                    days+=tian[i-1];
+                }
+            }
+            //console.log("DAYS:"+days);
+            return (5-(days%7)+7)%7;
+        }
+    }
+
+   $('button').click(function () {
+      var year =  $('input#myyear').val();
+      var month = $('input#mymonth').val();
+      console.log(year +" "+month);
+        show(year,month);
+    })
+</script>
+</body>
+</html>
